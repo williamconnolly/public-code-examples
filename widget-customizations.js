@@ -7,7 +7,7 @@ window.addEventListener('khorosWidgetOpened', function () {
     modernChatWidget.style.bottom = '0px';
     modernChatWidget.style.right = '20px';
     let khorosWidgetCloseButton = modernChatWidget.contentWindow.document.getElementById('khWidgetCloseButton');
-    khorosWidgetCloseButton.addEventListener('click', async function (e) {
+    khorosWidgetCloseButton?.addEventListener('click', async function (e) {
         e.preventDefault();
         e.stopPropagation();
         getCloseConfirmation();
@@ -15,12 +15,20 @@ window.addEventListener('khorosWidgetOpened', function () {
     getMinimizeButton();
 });
 
+function getKhorosChatWindowHeader() {
+    return document.getElementById('web-messenger-container').contentDocument.querySelector('.khChatWindowHeader');
+}
+
 function getMinimizeButton(){
     document.getElementById('web-messenger-container').contentDocument.getElementById('khoros-minimize-button')?.remove();
     let minimizeButton = document.createElement('button');
     minimizeButton.setAttribute('id', 'khoros-minimize-button');
     minimizeButton.textContent ='-';
-    document.getElementById('web-messenger-container').contentDocument.getElementById('header').insertBefore(minimizeButton, document.getElementById('web-messenger-container').contentDocument.getElementById('khWidgetCloseButton'));
+    let khorosChatWindowHeader = getKhorosChatWindowHeader();
+    let khorosWidgetCloseButton = document.getElementById('web-messenger-container').contentDocument.getElementById('khWidgetCloseButton');
+    if (khorosChatWindowHeader && khorosWidgetCloseButton) {
+        khorosChatWindowHeader.insertBefore(minimizeButton, khorosWidgetCloseButton);
+    }
 }
 
 async function getOKConfirmation() {
@@ -62,14 +70,17 @@ function getCloseConfirmation() {
     divSubElement.appendChild(buttonCancel);
     divMainElement.appendChild(divSubElement);
     // Append the div to the document
-    document.getElementById('web-messenger-container').contentDocument.getElementById('khChatWindowContainer').insertBefore(divMainElement, document.getElementById('web-messenger-container').contentDocument.getElementById('header').nextSibling);
+    let khorosChatWindowHeader = getKhorosChatWindowHeader();
+    if (khorosChatWindowHeader) {
+        document.getElementById('web-messenger-container').contentDocument.getElementById('khChatWindowContainer')?.insertBefore(divMainElement, khorosChatWindowHeader.nextSibling);
+    }
 
     let khWidgetCloseOkButton = document.getElementById('web-messenger-container').contentWindow.document.getElementById('okay-button');
     let khWidgetCloseCancelButton = document.getElementById('web-messenger-container').contentWindow.document.getElementById('cancel-button');
-    khWidgetCloseOkButton.addEventListener('click', function (e) {
+    khWidgetCloseOkButton?.addEventListener('click', function (e) {
         getOKConfirmation();
     });
-    khWidgetCloseCancelButton.addEventListener('click', function (e) {
+    khWidgetCloseCancelButton?.addEventListener('click', function (e) {
         getCancelConfirmation();
     });
 }
